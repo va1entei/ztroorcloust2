@@ -22,7 +22,6 @@ def get_text_messages(message):
         for i in range(3):
             bot.send_message(message.from_user.id,"|"+ str(board[0+i*3])+ "|"+ str(board[1+i*3])+ "|"+ str(board[2+i*3])+ "|")
             bot.send_message(message.from_user.id, "-" * 13)           
-
     else:
         bot.send_message(message.from_user.id, "i undestend write /help.")
 
