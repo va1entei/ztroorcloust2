@@ -19,7 +19,8 @@ def draw_board(bot,message,board):
 def take_input(bot,message,player_token):
     valid = False
     while not valid:
-        bot.send_message(message.from_user.id,"Куда поставим " + player_token+"? ")
+        valid = True
+        #bot.send_message(message.from_user.id,"Куда поставим " + player_token+"? ")
         player_answer = message.text
         try:
             player_answer = int(player_answer)
@@ -44,16 +45,48 @@ def check_win(board):
     return False
 
 
+stateGame = 0
+# 0 no game
+# 1 start game and write board
+# 2 insert data to board
+countGame = 0
+
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    print(message.text)
+    global stateGame
+    global countGame
+    print(stateGame)
+    print(countGame)
     if message.text == "/help":
         bot.send_message(message.from_user.id, "hello my dear  hoziain im a you slav")
+    elif stateGame == 0 and message.text == "gogo":
+        stateGame = 1
+        countGame = 0
+        draw_board(bot,message,board)
+    elif stateGame >= 1 and message.text.isdigit():
+        stateGame = 2
+        if countGame % 2 == 0:
+            take_input(bot,message,"X")
+        else:
+            take_input(bot,message,"O")        
+        countGame += 1
+        if countGame > 4:
+            tmp = check_win(board)
+            if tmp:
+                bot.send_message(message.from_user.id, tmp)
+                bot.send_message(message.from_user.id, "выиграл!")
+                win = True
+                stateGame = 0
+        if countGame == 9:
+            bot.send_message(message.from_user.id,"Ничья!")
+            stateGame = 0
+        draw_board(bot,message,board)
     elif message.text == "tt":
         draw_board(bot,message,board)
     elif "aa" in message.text:
         take_input(bot,message,"X")
     else:
+        stateGame = 0
         bot.send_message(message.from_user.id, "i undestend write /help.")
 
 bot.polling(none_stop=True, interval=0)	
